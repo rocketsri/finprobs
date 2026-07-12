@@ -1,0 +1,125 @@
+\documentclass[11pt]{article}
+\usepackage{finprobs}
+
+\title{Theoretical Improvements to Unified Rough/Multifractal\\ Volatility Models: A Synthesis}
+\author{finprobs Research Project}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The log S-fBM model of \citet{wu2022rough} unifies rough volatility (fractional-Brownian-driven log-volatility, Hurst $H>0$) and the Multifractal Random Walk / log-normal cascade ($H\to0$) as limits of a single Gaussian process. Unification alone is not a theoretical advance: it does not by itself explain why $H$ takes the values it does, whether the model's multifractality is a genuine temporal phenomenon, or whether it improves anything practitioners calibrate against. This paper synthesizes a four-part investigation (detailed in companion papers in this series) into exactly these questions, conducted by an orchestrated multi-agent research process with adversarial citation auditing and direct empirical/computational verification. We correct a persistent mischaracterization of the model's own mathematical structure, report a decisive asymmetry in how well-supported its two dimensions are, and state two small but genuine new theoretical results not found anywhere in the literature searched.
+\end{abstract}
+
+\section{Background and motivation}
+
+Rough volatility \citep{gatheral2018volatility,eleuch2018microstructural} and multifractal cascade models \citep{bacry2003multifractal} have historically been treated as competing descriptions of the same stylized facts: volatility clustering, long memory, fat tails, and apparent multiscaling. \citet{wu2022rough} showed these are not competitors but two limits of a single one-parameter family -- a mathematically clean result. The question this series addresses is what, beyond that unification, is actually gained: does it explain the empirically observed values of $H$, is the multifractality it produces genuinely temporal, can its parameters be derived rather than fit, and does it solve any practical calibration problem that the separate models could not.
+
+We organize the investigation into four directions, each the subject of a companion paper in this series:
+\begin{enumerate}
+\item[\textbf{P1}] Distributional versus temporal multifractality.
+\item[\textbf{P2}] Scale-dependence of $H$ as a renormalization-group-like flow across aggregation.
+\item[\textbf{P3}] Microstructural derivation of the roughness and intermittency parameters.
+\item[\textbf{P4}] Empirical/pricing payoff for joint SPX/VIX calibration.
+\end{enumerate}
+
+\section{Methodology}
+
+The investigation was conducted by approximately 26 independent large-language-model research and audit agents across five rounds: (i) eight diverse-exploration agents, two independent angles per direction, deliberately kept unaware of each other's approach to preserve genuine independence; (ii) manual synthesis into an approach registry grouped by underlying mechanism, used to redirect effort away from premature convergence; (iii) ten deepening and dedicated adversarial-audit agents, checking citation accuracy, conflation of distributional and temporal multifractality, circularity in derivations, and cross-direction consistency; (iv) four cross-pollination agents connecting compatible threads across directions; (v) eight follow-up agents on problems the first four rounds newly opened. Every citation flagged as surprising or load-bearing was independently re-verified against its primary source (arXiv abstracts and full text fetched directly, not trusted from any single agent's summary); two accuracy errors -- an author misattribution and a mischaracterized maturity range in one cited result -- were caught this way and corrected before publication. A subset of testable claims was additionally verified by direct computation: closed-form numerical checks, Monte Carlo simulation against known ground truth, and analysis of a freshly collected fifteen-year real-market dataset (S\&P 500 index and 25 large-cap single names) that no cited paper uses.
+
+\section{A necessary correction: what the model actually is}
+
+The informal description of log S-fBM as a ``Box--Cox/Tsallis-style deformation'' -- used in early framings of this investigation and common in secondary discussion of the model -- is not accurate. Reading \citet{wu2022rough} directly gives log-volatility $\omega_{H,T}(t)$ as a \emph{stationary Gaussian process}, with covariance
+\begin{equation}
+C_\omega(\tau) = \frac{\nu^2}{2}\left[T^{2H}-\tau^{2H}\right], \qquad |\tau|<T, \qquad \nu^2 = \frac{\lambda^2}{H(1-2H)}, \label{eq:cov}
+\end{equation}
+and volatility measure $M_{H,T}(dt)=e^{\omega_{H,T}(t)}dt$. There is no separate nonlinear marginal deformation function; $H$, $\lambda^2$, and the decorrelation scale $T$ are three structurally independent free parameters (mildly anti-correlated only empirically, not by theoretical necessity). As $T\to\infty$, the process converges to standard fBM (\citealp{wu2022rough}, Prop.~1); as $H\to0$ with $\lambda^2$ fixed, \eqref{eq:cov} converges to the exactly logarithmic covariance $\lambda^2\log(T/\tau)$ (\citealp{wu2022rough}, Prop.~2) -- the genuine mechanism generating multifractality via Gaussian multiplicative chaos \citep{kahane1985chaos}, not a curvature parameter on a marginal distribution. The source paper is purely a probability/statistics paper (GMM estimation applied to realized volatility across 24 indices and 296 stocks); it contains no options-pricing content, and its own authors flag the aggregation question addressed in P2 as explicit future work, confirming it as a genuine open problem rather than one this investigation invented.
+
+\section{Synthesis of findings}
+
+\subsection{The central asymmetry}
+
+Combining all four companion papers, one conclusion is decisive and was independently corroborated from three unrelated angles:
+
+\begin{finding}[Central asymmetry]
+The roughness ($H$) dimension of log S-fBM is moderately supported by both theory and data: a rigorous microstructural derivation exists at the pure-fBM endpoint (P3, \citealp{eleuch2018microstructural}), and a rigorous, now simulation-confirmed aggregation mechanism explains why index volatility is smoother than any single name, conditional on an empirical input (P2, \citealp{zarhali2025nested}). The multifractal/intermittency ($\lambda^2$) dimension is the weakest-supported part of the entire framework, undermined simultaneously and independently: it is not established whether the model's own multiscaling is genuinely temporal rather than a fat-tailed-marginal artifact (P1); no microstructural mechanism, Hawkes-based or otherwise, has been found to produce it, and two specific candidates were proven not to work (P3); and a first-principles derivation shows $\lambda^2$ is calibration-inert for the one practical payoff most likely to justify it (P4).
+\end{finding}
+
+Two independent derivation attempts -- P2's attempt to derive why the common factor is smoother than idiosyncratic volatility, and P3's attempt to derive a multiplicative Hawkes-hierarchy mechanism for the cascade -- hit structurally the same wall: both had to posit exogenous structure to obtain the desired result rather than deriving it from first principles. This recurrence across independent efforts suggests a genuinely hard, not merely under-explored, class of problem.
+
+\subsection{Novel results}
+
+Two small but genuine theoretical results emerged that are not present anywhere in the literature searched, both now verified by direct computation rather than resting on derivation alone.
+
+\begin{theorem}[P4]
+At fixed $H$, the intermittency parameter $\lambda^2$ cancels out exactly of the ratio between short-maturity and VIX-horizon log-volatility covariance under \eqref{eq:cov}; the correlation-timescale parameter $T$ governs that ratio instead.
+\end{theorem}
+
+\begin{theorem}[P3]
+Linear superposition of independent nearly-unstable Hawkes-process scaling limits remains jointly Gaussian under time-invariant mixing weights, and therefore cannot produce genuine multifractal curvature in the structure function of $\log\sigma_t$ -- narrowing the open problem of a microstructural cascade derivation to one precisely specified missing double-scaling limit theorem.
+\end{theorem}
+
+\subsection{Cross-direction consistency}
+
+An adversarial audit run across all four directions together identified a specific, reportable tension: P2's use of single-stock $H\approx0.01$ as evidence of genuine ``super-roughness'' sits inside exactly the regime P1 found to be dominated by distributional (not temporal) confound in the closely related rough Bergomi model. If this transfers to log S-fBM, P2's empirical anchor may be partly an estimation artifact rather than pure dynamics -- a dependency P2 does not resolve and flags explicitly. A second tension, discovered by direct cross-paper derivation, is documented in P4: the same aggregation mechanism that explains P2's central claim likely erodes, rather than reinforces, the $T$-lever proposed in P4 as the practical payoff of unification. Finally, the \citet{gatheral2018volatility} $H\approx0.1$ estimate for the S\&P~500 is used as an empirical anchor in both P2 and P4; it should be read as one data point in two contexts, not two independent corroborations.
+
+\section{Findings summary}
+
+\begin{itemize}
+\item \labelestablished. The model's actual mathematical structure (Section~3), correcting prior informal descriptions.
+\item \labelestablished. The central asymmetry between the $H$ and $\lambda^2$ dimensions (Finding~1), corroborated across three independent lines of investigation.
+\item \labelestablished. Both novel theoretical results (Theorems~1 and~2), each verified by direct computation.
+\item \labelplausible. The specific cross-direction tensions identified in Section~4.3, each with a stated, checkable follow-up.
+\end{itemize}
+
+\section{Future directions}
+
+Ranked by how directly they would move the open questions forward, given what is now known across all four companion papers:
+\begin{enumerate}
+\item Run the boundary-corrected genuineness diagnostic proposed in P1 properly (full Self--Liang likelihood-ratio test, high-frequency realized variance, larger sample) rather than the simplified version validated here.
+\item Attempt the joint double-scaling Hawkes limit theorem specified in P3 -- the missing object for a positive microstructural derivation of the cascade parameters is now precisely stated.
+\item Build a minimal log S-fBM option-pricing engine and test the $T$-lever hypothesis from P4 directly against public SPX/VIX data, with an explicit parameter-matched overfitting control.
+\item Test the branching-ratio prediction from P2's speculative economic mechanism, and the $T_{\text{index}}$ prediction from P4's cross-direction tension, both of which are new and currently untested.
+\item Reconcile P1's model-level finding (classical MRW is temporal-dominant) with the market-level finding that observed multifractality is mainly distributional -- either by testing whether log S-fBM with realistic parameters reproduces the latter, or by identifying the methodological source of the discrepancy.
+\end{enumerate}
+
+\section*{Acknowledgments}
+This paper and its companions were produced by an orchestrated multi-agent AI research investigation. All citations were independently re-verified against primary sources; all numerical claims were computed, simulated, or estimated directly and confirmed before inclusion, with limitations reported honestly rather than omitted, per the investigation's own stated reporting standard.
+
+\bibliographystyle{plainnat}
+\begin{thebibliography}{99}
+
+\bibitem[Bacry and Muzy(2003)]{bacry2003multifractal}
+E.~Bacry and J.-F.~Muzy.
+\newblock Log-infinitely divisible multifractal processes.
+\newblock \emph{Communications in Mathematical Physics}, 236(3):449--475, 2003.
+
+\bibitem[El~Euch et al.(2018)]{eleuch2018microstructural}
+O.~El~Euch, M.~Fukasawa, and M.~Rosenbaum.
+\newblock The microstructural foundations of leverage effect and rough volatility.
+\newblock \emph{Finance and Stochastics}, 22(2):241--280, 2018.
+
+\bibitem[Gatheral et al.(2018)]{gatheral2018volatility}
+J.~Gatheral, T.~Jaisson, and M.~Rosenbaum.
+\newblock Volatility is rough.
+\newblock \emph{Quantitative Finance}, 18(6):933--949, 2018.
+
+\bibitem[Kahane(1985)]{kahane1985chaos}
+J.-P.~Kahane.
+\newblock Sur le chaos multiplicatif.
+\newblock \emph{Annales de la Facult\'e des Sciences de Toulouse}, 9(2):105--150, 1985.
+
+\bibitem[Wu et al.(2022)]{wu2022rough}
+Q.~Wu, J.-F.~Muzy, and E.~Bacry.
+\newblock From rough to multifractal volatility: the log S-fBM model.
+\newblock \emph{Physica A}, 604:127919, 2022. arXiv:2201.09516.
+
+\bibitem[Zarhali et al.(2025)]{zarhali2025nested}
+O.~Zarhali, C.~Aubrun, E.~Bacry, J.-P.~Bouchaud, and J.-F.~Muzy.
+\newblock A nested factor model for equity markets: reconciling multifractal stock returns and rough index volatilities.
+\newblock \emph{arXiv:2505.02678}, 2025.
+
+\end{thebibliography}
+
+\end{document}

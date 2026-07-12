@@ -1,0 +1,194 @@
+\documentclass[11pt]{article}
+\usepackage{finprobs}
+
+\title{Toward a Microstructural Derivation of Cascade Parameters\\ in Rough/Multifractal Volatility}
+\author{finprobs Research Project}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\citet{eleuch2018microstructural} showed that rough volatility ($H>0$) emerges as a scaling limit of order flow modeled by a nearly-unstable Hawkes process. No analogous derivation exists for the multifractal/cascade endpoint ($H\to0$) of the log S-fBM model, or for its intermittency parameter $\lambda^2$. We test and rule out three specific candidate mechanisms -- linear Hawkes superposition, quadratic (Zumbach-effect) Hawkes feedback, and exact (rather than near-) criticality -- each with an explicit proof or citation to rigorous prior theory. We survey non-Hawkes alternatives and find none connects rigorously to order-flow primitives either. We narrow the open problem to one precisely specified missing object: a joint double-scaling limit theorem, and identify a suggestive but unproven connection to existing results on the multiplicative chaos of $H=0$ fractional Brownian fields.
+\end{abstract}
+
+\section{Background and motivation}
+
+The log S-fBM covariance \citep{wu2022rough} is
+\begin{equation}
+C_\omega(\tau) = \frac{\nu^2}{2}\left[T^{2H}-\tau^{2H}\right] \;\xrightarrow[H\to0,\ \lambda^2\ \text{fixed}]{}\; \lambda^2\log(T/\tau). \label{eq:cov-limit}
+\end{equation}
+The right-hand limit is a log-correlated Gaussian field, the object underlying Gaussian multiplicative chaos (GMC) \citep{kahane1985chaos,rhodes2014gaussian} and the classical Multifractal Random Walk (MRW) of \citet{bacry2003multifractal}. On the microstructural side, \citet{jaisson2016rough} and \citet{eleuch2018microstructural} show that a single nearly-unstable Hawkes process with heavy-tailed kernel $\varphi(x)\sim x^{-(1+\alpha)}$, $\alpha\in(1/2,1)$, converges under joint rescaling to a rough Volterra/fractional CIR process with $H=\alpha-\tfrac12\in(0,\tfrac12)$. This is a genuine derivation of $H$ from order-flow primitives -- not a fitted parameter.
+
+\begin{finding}
+No paper derives the cascade/multifractal parameters ($\lambda^2$, $T$) of the log S-fBM family from any microstructural mechanism. This is an established gap in the literature, not merely an unverified claim -- we searched specifically and found nothing.
+\end{finding}
+
+We test three natural candidate mechanisms for closing this gap and survey a fourth, non-Hawkes, category.
+
+\section{Candidate mechanism 1: linear Hawkes superposition}
+
+\begin{proposition}
+Let $N_t = \sum_k N_t^{(k)}$ be a superposition of independent, or jointly Gaussian-limiting, nearly-unstable Hawkes processes at distinct timescales, each converging via \citet{jaisson2016rough} to a Gaussian process $X_t^{(k)}$ with Hurst exponent $H_k$. If $\log\sigma_t = \sum_k a_k X_t^{(k)}$ for fixed (time- and state-independent) weights $a_k$, then $\log\sigma_t$ is Gaussian, and its structure function is exactly linear: $\zeta(q)=qH^*$ for some effective $H^*$.
+\end{proposition}
+\begin{proof}
+A linear combination of jointly Gaussian random variables is Gaussian. For a self-similar Gaussian process with stationary increments, $\E|\Delta_\tau \log\sigma|^q = c_q \Var(\Delta_\tau\log\sigma)^{q/2}$ by the standard normal absolute-moment identity, and $\Var(\Delta_\tau\log\sigma)\sim\tau^{2H^*}$ by self-similarity of the dominant component at long lag. Hence $\zeta(q)=qH^*$, linear in $q$.
+\end{proof}
+
+\begin{finding}
+\labelnegative{} (with two caveats). Linear superposition can produce rich long-range dependence (an effective $H^*$ shaped by the mixture of timescales) but cannot produce genuine multifractal curvature in $\zeta(q)$. \textbf{Caveat A:} this requires \emph{jointly} Gaussian components with time-invariant weights; if $a_k$ depend on regime or on another band's realized level, the sum is generically non-Gaussian and the conclusion fails. \textbf{Caveat B:} the negative result concerns $\log\sigma_t$ itself, not $\sigma_t$ or returns. If $\log\sigma_t$ is Gaussian with a \emph{log-correlated} covariance -- exactly \eqref{eq:cov-limit} -- then $\sigma_t=e^{\log\sigma_t}$ is already genuinely multifractal via the standard GMC mechanism, without requiring any hierarchy. This reframes the problem: the question is not ``how to escape Gaussianity'' but ``how to make a single microstructural mechanism produce log-correlated, rather than power-law, Gaussian log-volatility.''
+\end{finding}
+
+\section{Candidate mechanism 2: quadratic (Zumbach) Hawkes}
+
+Quadratic Hawkes processes \citep{blanc2017quadratic} let the intensity depend on a squared, weighted average of past price moves, $\lambda_t=\lambda_\infty+H_t+Z_t^2$, capturing the empirically documented Zumbach effect (trends raise future volatility more than mean-reversion does). \citet{dandapani2021superheston} extend this with long-memory kernels to a ``super-Heston'' rough volatility limit with enhanced vol-of-vol.
+
+\begin{finding}
+\labelnegative. The quadratic feedback genuinely escapes Gaussianity, but into the \emph{affine/Pearson-diffusion} (CIR/Heston-type) universality class, not the log-normal cascade class. We checked \citet{dandapani2021superheston} directly for multifractal-spectrum or $\zeta(q)$-curvature content and found none; the underlying object is structurally a square-root/Feller-type diffusion, which does not exhibit the self-similar log-covariance decay a genuine cascade requires. This is a useful and rigorous microstructural derivation of the Zumbach/leverage effect, but a dead end for the specific question of cascade-parameter derivation.
+\end{finding}
+
+\section{Candidate mechanism 3: exact criticality}
+
+We next ask whether \emph{exact} (rather than merely near-) criticality of the Hawkes branching ratio changes the qualitative scaling regime.
+
+\begin{proposition}[\citealp{cohen2024functional}]
+For a Hawkes process with branching ratio fixed at exactly $1$: if offspring dispersion is finite-variance, the rescaled intensity converges to a CIR process without mean-reversion, $d\lambda_t = \kappa\,dt + \sigma\sqrt{\lambda_t}\,dW_t$, for which $\Var(\lambda_t)\sim \kappa\sigma^2 t^2/2$ -- explosive, super-linear growth. If offspring dispersion is heavy-tailed, the process instead behaves subcritically, with power-law long-range dependence.
+\end{proposition}
+
+Classical Yaglom-type theory \citep{yaglom1947} gives a third regime: a critical branching process conditioned on survival has population size scaling \emph{linearly} in $t$.
+
+\begin{finding}
+\labelnegative. None of the three known regimes under exact criticality -- explosive $\sim t^2$ growth, power-law long-range dependence, or linear Yaglom-type growth -- is logarithmic. We flag an important conceptual distinction: ``criticality'' of a Hawkes branching ratio in \emph{time} and ``criticality'' of a multiplicative cascade across \emph{dyadic scales} (the actual mechanism behind \eqref{eq:cov-limit} and GMC) are different notions, and should not be conflated. The number of independent-variance cascade steps needed to resolve scale $\tau$ in a dyadic construction is $\sim\log_2(T/\tau)$ -- this is where the logarithm in \eqref{eq:cov-limit} actually comes from, and it has no counterpart in Hawkes branching-ratio criticality.
+\end{finding}
+
+\section{Non-Hawkes alternatives}
+
+We surveyed three further categories.
+
+\begin{itemize}
+\item \textbf{Kesten-type multiplicative recursions} \citep{sornette1997convergent} are a classical route to power-law tails, but we found no paper casting order-book depth or liquidity as a Kesten variable feeding a genuine nested-timescale cascade; existing stochastic-liquidity models treat depth as an exogenous diffusion, not a self-referential multiplicative recursion.
+\item \textbf{Branching random walks and GMC constructions} \citep{rhodes2014gaussian} rigorously construct log-correlated fields from branching processes, and \citet{simatos2014coupling} rigorously couples a branching random walk to a limit-order-book model -- but for a different (price-extremes) question, with no connection to a log-correlated volatility field.
+\item \textbf{Agent-based/cascade trader models} \citep{ghashghaie1996turbulent} propose a turbulence-cascade analogy, disputed on methodological grounds by \citet{barndorffnielsen1997comment}, and later hierarchical fits \citep{cascade2018multiplicative} remain top-down statistical fits with ad hoc corrections, not order-flow derivations.
+\end{itemize}
+
+\begin{finding}
+\labelnegative. No non-Hawkes mechanism found in the literature rigorously connects to order-flow primitives either. Everything outside Hawkes is either pure mathematics with no market microfoundation, or phenomenological analogy fitted top-down to data.
+\end{finding}
+
+\section{A precisely specified open problem}
+
+\citet{hagerneuman2020multiplicative} show that properly renormalized fractional Brownian motion itself converges, as $H\to0$, to exactly the log-correlated Gaussian field / GMC structure needed for \eqref{eq:cov-limit} -- via pure Gaussian-field renormalization, with no microstructure underneath. This is suggestive: the target object is already known to arise as an $H\to0$ limit of the \emph{same family} that Hawkes processes already converge to at $H>0$.
+
+\begin{openproblem}
+Does the established single-Hawkes scaling limit of \citet{jaisson2016rough} (kernel tail index $\alpha\to\tfrac12$ from above, i.e.\ $H\to0$) connect directly to the \citet{hagerneuman2020multiplicative} log-correlated limit, without requiring a multiplicative hierarchy? We searched the literature for treatment of the $\alpha\le\tfrac12$ boundary and found none -- existing proofs rely on square-integrability of the limiting Riemann-Liouville kernel $g(t)=t^{\alpha-1}/\Gamma(\alpha)$, which is lost exactly at $H=0$. This is a genuine technical wall, not evidence either way.
+\end{openproblem}
+
+We state precisely what would be needed: a functional limit theorem for a nearly-unstable Hawkes process with kernel tail index $\alpha_n\to\tfrac12$ \emph{jointly} with the subcriticality gap $(1-\|\varphi_n\|_1)\to0$, at a coupled rate, under which the rescaled \emph{log}-intensity -- not the intensity itself -- converges to a Gaussian process whose covariance degenerates from power-law to logarithmic. No such theorem currently exists in the finance or point-process literature we searched.
+
+\section{Findings summary}
+
+\begin{itemize}
+\item \labelestablished. Rough volatility ($H>0$) is derived from Hawkes microstructure \citep{eleuch2018microstructural,jaisson2016rough}; no analogous derivation exists for cascade parameters.
+\item \labelnegative. Linear Hawkes superposition (Proposition~1), with two precisely stated caveats.
+\item \labelnegative. Quadratic/Zumbach Hawkes (wrong universality class).
+\item \labelnegative. Exact criticality (three known regimes, none logarithmic).
+\item \labelnegative. All non-Hawkes mechanisms surveyed.
+\item \labelspeculative. The $\alpha\to\tfrac12$ boundary connection to \citet{hagerneuman2020multiplicative}, with the missing theorem precisely specified (Open Problem~1).
+\end{itemize}
+
+\section{Future directions}
+
+\begin{enumerate}
+\item Attempt the joint double-scaling limit theorem specified in Open Problem~1, drawing on the \citet{hagerneuman2020multiplicative} renormalization as a template for the target object.
+\item Investigate whether a Cox-Hawkes hierarchy with genuinely multiplicative (exponential) cross-scale modulation -- as opposed to the ruled-out linear superposition and quadratic feedback -- can supply the missing log-covariance structure; the specific missing lemma is a scaling-limit theorem controlling the exact log-covariance decay across levels, not merely aggregate intensity fluctuations.
+\item Even if a positive theorem is found, assess estimability: participant-segmented tick data is not publicly available, so any resulting mechanism may remain empirically unfalsifiable at the microstructure level with realistically obtainable data.
+\end{enumerate}
+
+\section*{Acknowledgments}
+This paper synthesizes research conducted by an orchestrated multi-agent AI investigation, with all citations independently re-verified against primary sources.
+
+\bibliographystyle{plainnat}
+\begin{thebibliography}{99}
+
+\bibitem[Bacry and Muzy(2003)]{bacry2003multifractal}
+E.~Bacry and J.-F.~Muzy.
+\newblock Log-infinitely divisible multifractal processes.
+\newblock \emph{Communications in Mathematical Physics}, 236(3):449--475, 2003.
+
+\bibitem[Barndorff-Nielsen and Prause(1997)]{barndorffnielsen1997comment}
+O.~E.~Barndorff-Nielsen and K.~Prause.
+\newblock Comment on ``Turbulent cascades in foreign exchange markets''.
+\newblock \emph{cond-mat/9607120}, 1997.
+
+\bibitem[Blanc et al.(2017)]{blanc2017quadratic}
+P.~Blanc, J.~Donier, and J.-P.~Bouchaud.
+\newblock Quadratic Hawkes processes for financial prices.
+\newblock \emph{Quantitative Finance}, 17(2):171--188, 2017.
+
+\bibitem[Cohen and Dombry(2024)]{cohen2024functional}
+S.~N.~Cohen and C.~Dombry.
+\newblock Functional limit theorems for Hawkes processes.
+\newblock \emph{Probability Theory and Related Fields}, 2024. arXiv:2401.11495.
+
+\bibitem[Dandapani et al.(2021)]{dandapani2021superheston}
+A.~Dandapani, P.~Jusselin, and M.~Rosenbaum.
+\newblock From quadratic Hawkes processes to super-Heston rough volatility models with Zumbach effect.
+\newblock \emph{Quantitative Finance}, 21(8):1235--1247, 2021.
+
+\bibitem[El~Euch et al.(2018)]{eleuch2018microstructural}
+O.~El~Euch, M.~Fukasawa, and M.~Rosenbaum.
+\newblock The microstructural foundations of leverage effect and rough volatility.
+\newblock \emph{Finance and Stochastics}, 22(2):241--280, 2018.
+
+\bibitem[Ghashghaie et al.(1996)]{ghashghaie1996turbulent}
+S.~Ghashghaie, W.~Breymann, J.~Peinke, P.~Talkner, and Y.~Dodge.
+\newblock Turbulent cascades in foreign exchange markets.
+\newblock \emph{Nature}, 381:767--770, 1996.
+
+\bibitem[Hager and Neuman(2020)]{hagerneuman2020multiplicative}
+K.~Hager and E.~Neuman.
+\newblock The multiplicative chaos of $H=0$ fractional Brownian fields.
+\newblock \emph{arXiv:2008.01385}, 2020.
+
+\bibitem[Jaisson and Rosenbaum(2016)]{jaisson2016rough}
+T.~Jaisson and M.~Rosenbaum.
+\newblock Rough fractional diffusions as scaling limits of nearly unstable heavy tailed Hawkes processes.
+\newblock \emph{Annals of Applied Probability}, 26(5):2860--2882, 2016.
+
+\bibitem[Rhodes and Vargas(2014)]{rhodes2014gaussian}
+R.~Rhodes and V.~Vargas.
+\newblock Gaussian multiplicative chaos and applications: a review.
+\newblock \emph{Probability Surveys}, 11:315--392, 2014.
+
+\bibitem[Simatos(2014)]{simatos2014coupling}
+F.~Simatos.
+\newblock Coupling limit order books and branching random walks.
+\newblock \emph{Journal of Applied Probability}, 51(3):625--639, 2014.
+
+\bibitem[Sornette and Cont(1997)]{sornette1997convergent}
+D.~Sornette and R.~Cont.
+\newblock Convergent multiplicative processes repelled from zero: power laws and truncated power laws.
+\newblock \emph{cond-mat/9609074}, 1997.
+
+\bibitem[Various authors(2018)]{cascade2018multiplicative}
+Multiplicative random cascades with additional stochastic process in financial markets.
+\newblock \emph{arXiv:1809.00820}, 2018.
+
+\bibitem[Wu et al.(2022)]{wu2022rough}
+Q.~Wu, J.-F.~Muzy, and E.~Bacry.
+\newblock From rough to multifractal volatility: the log S-fBM model.
+\newblock \emph{Physica A}, 604:127919, 2022. arXiv:2201.09516.
+
+\bibitem[Yaglom(1947)]{yaglom1947}
+A.~M.~Yaglom.
+\newblock Certain limit theorems of the theory of branching random processes.
+\newblock \emph{Doklady Akademii Nauk SSSR}, 56:795--798, 1947.
+
+\bibitem[Kahane(1985)]{kahane1985chaos}
+J.-P.~Kahane.
+\newblock Sur le chaos multiplicatif.
+\newblock \emph{Annales de la Facult\'e des Sciences de Toulouse}, 9(2):105--150, 1985.
+
+\end{thebibliography}
+
+\end{document}

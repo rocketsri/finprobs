@@ -1,0 +1,203 @@
+\documentclass[11pt]{article}
+\usepackage{finprobs}
+
+\title{Distributional versus Temporal Multifractality\\ in the log S-fBM Volatility Model}
+\author{finprobs Research Project}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The log S-fBM model of \citet{wu2022rough} unifies rough volatility ($H>0$) and the Multifractal Random Walk (MRW) cascade ($H\to0$) as limits of a single Gaussian process. A standing question for any model in this family is whether its multifractal scaling reflects a genuine temporal cascade or is an artifact of fat-tailed marginal distributions estimated on finite samples. We survey recent evidence that this confound is regime-dependent in the closely related rough Bergomi model, construct and adversarially repair a diagnostic tailored to log S-fBM's own parametrization, validate the repaired diagnostic by Monte Carlo simulation against known ground truth, and apply it to freshly collected real market data. We find the confound is real and regime-dependent, that no prior work has tested log S-fBM itself, that our diagnostic has asymmetric statistical power at practical sample sizes, and that a more careful nested test substantially complicates the simple textbook picture of ``rough single stocks, smooth indices'' on real data. We report all of this, including where our own construction fell short, and label each claim honestly.
+\end{abstract}
+
+\section{Background and motivation}
+
+Volatility processes in equity markets exhibit \emph{multifractal scaling}: the $q$-th order structure function of log-volatility increments, $S_q(\tau) = \E|\omega_{t+\tau}-\omega_t|^q$, scales as $\tau^{\zeta(q)}$ with $\zeta(q)$ \emph{concave} in $q$ rather than linear. Two structurally different mechanisms can produce this appearance.
+
+\begin{definition}[Temporal multifractality]
+A process exhibits temporal multifractality if the concavity of $\zeta(q)$ arises from genuine multiplicative, hierarchical dependence across time scales -- a real cascade, in the sense of \citet{bacry2003multifractal}.
+\end{definition}
+
+\begin{definition}[Distributional (marginal) multifractality]
+A process exhibits distributional multifractality if the observed concavity of an \emph{estimated} $\zeta(q)$ is an artifact of a heavy-tailed marginal distribution combined with finite-sample moment estimation, and would persist even after destroying the temporal ordering of the data (e.g.\ by shuffling).
+\end{definition}
+
+These are not the same claim, and conflating them is a known trap in the multifractal-finance literature \citep{rak2018quantitative}. The log S-fBM model reproduces the classical MRW cascade exactly as its $H\to0$ limit, so the question of whether \emph{its own} multiscaling is genuinely temporal is directly inherited from the much older question of whether MRW-type models are identified from data at all -- a question that, surprisingly, has rarely been asked of MRW directly.
+
+\subsection{The actual log S-fBM covariance structure}
+
+Reading \citet{wu2022rough} directly (rather than relying on informal ``Box--Cox/Tsallis deformation'' descriptions that circulate around this model) gives log-volatility $\omega_{H,T}(t)$ as a \emph{stationary Gaussian process} with covariance
+\begin{equation}
+C_\omega(\tau) = \frac{\nu^2}{2}\left[T^{2H} - \tau^{2H}\right], \qquad |\tau|<T, \label{eq:cov-power}
+\end{equation}
+and zero beyond $T$, where $\nu^2 = \lambda^2/[H(1-2H)]$. As $H\to0$ with $\lambda^2$ held fixed, \eqref{eq:cov-power} converges to
+\begin{equation}
+C_\omega(\tau) \;\longrightarrow\; \lambda^2 \log(T/\tau), \label{eq:cov-log}
+\end{equation}
+an exactly \emph{logarithmic} covariance -- the standard signature of a log-correlated Gaussian field and the mechanism underlying Gaussian multiplicative chaos \citep{kahane1985chaos, rhodes2014gaussian}. This is the actual source of genuine multifractality in this model family: not a nonlinear marginal deformation, but a specific covariance shape. Equations~\eqref{eq:cov-power}--\eqref{eq:cov-log} are the technical foundation for everything that follows: because \eqref{eq:cov-log} is literally the $H\to0$ boundary limit of \eqref{eq:cov-power}, the ``genuine cascade'' and ``self-affine rough'' hypotheses are \emph{nested}, not merely competing, models -- a fact we exploit in Section~\ref{sec:diagnostic}.
+
+\section{Related work}
+
+\citet{brandi2026multiscaling} apply a two-stage surrogate procedure to rough Bergomi: fBM-type surrogates confirm multiscaling is present at all, and marginal-preserving shuffled surrogates isolate how much of it is distributional. We independently re-verified their reported figures against the source tables. The result is sharply \emph{regime-dependent} in $H$: at $H=0.001$, $95.3\%$ of the apparent $\zeta(q)$ nonlinearity is distributional; at $H=0.01$, $78.4\%$; the balance flips by $H=0.05$ ($29.1\%$ distributional, $70.9\%$ temporal); and by $H=0.1$--$0.2$, $90$--$96.5\%$ is temporal. They separately validate their method on classical MRW at $\lambda=0.25$, finding it $78.5\%$ temporal-dominant -- to our knowledge the first such surrogate test ever run on MRW itself, not merely a re-confirmation of prior analytic results.
+
+This creates an immediate tension with a distinct empirical literature. \citet{zhou2009finite} and \citet{jiang2012understanding} decompose \emph{observed market} multifractality (not model-generated) and find it is mainly distributional/fat-tail driven, with temporal correlations if anything \emph{reducing} apparent multiscaling -- the opposite emphasis from the MRW model result above. If log S-fBM is meant as a model of the empirical phenomenon, this mismatch between what the model produces and what markets show is an open question. \citet{lebaron2001stochastic} adds a further identifiability caution: a simple additive (non-cascade) stochastic volatility model can mimic multifractal-looking statistics too, so observed multiscaling alone does not uniquely implicate cascade dynamics.
+
+\citet{rak2018quantitative} give the general semi-analytical machinery (Tsallis-distributed surrogates with controlled tail exponents) underlying this style of decomposition, predating and methodologically related to \citet{brandi2026multiscaling}.
+
+\begin{finding}
+No paper in the literature we searched runs a genuineness test of this kind on log S-fBM itself, across its parameter range. Every quantitative result above is for rough Bergomi or classical MRW.
+\end{finding}
+
+\section{A diagnostic for log S-fBM, and its repair}
+\label{sec:diagnostic}
+
+\subsection{First attempt: rank-invariance / Gaussianization}
+
+An initial construction exploited the fact that, if the volatility proxy is a monotone transform of a Gaussian driving process, ranks are exactly preserved under that transform. Gaussianizing the rank-transformed data should then recover the driving process's own dependence structure, letting one test $H_0$: ``the driving process is Gaussian with linear $\zeta(q)=qH$'' directly.
+
+An adversarial audit of this construction found three concrete flaws:
+\begin{enumerate}[label=(\alph*)]
+\item Using a realized-variance proxy (needed to suppress idiosyncratic noise) introduces a Jensen-gap bias, since $\E[g(X)] \ne g(\E[X])$ for the nonlinear map $g=\exp$ used by the model; the bias is largest exactly when $H$ is small -- the regime of interest.
+\item The null hypothesis is a strawman relative to the true competing models in this literature: a Gaussian log-volatility process with a \emph{log-correlated} covariance (exactly \eqref{eq:cov-log}) is already genuinely multifractal in returns without any non-Gaussian copula. Passing the rank test would misclassify this as ``no genuine cascade.''
+\item The surrogate noise distribution used to build comparison returns was left unspecified, which can bias the comparison independently of the actual $H$/$\lambda^2$ effect under test.
+\end{enumerate}
+
+\subsection{Repair: a nested covariance-functional-form test}
+
+Because \eqref{eq:cov-log} is the exact $H\to0$ limit of \eqref{eq:cov-power}, the correct test is not about the marginal copula at all: it is a \emph{nested} test of the covariance functional form itself.
+
+\begin{proposition}
+Let $C_P(\tau;H,T,\nu^2)$ denote \eqref{eq:cov-power} and $C_L(\tau;\lambda^2,T)$ denote \eqref{eq:cov-log}. Then $C_L(\tau;\lambda^2,T) = \lim_{H\to0} C_P(\tau;H,T,\nu^2(H,\lambda^2))$ pointwise for $\tau<T$, where $\nu^2(H,\lambda^2)=\lambda^2/[H(1-2H)]$.
+\end{proposition}
+\begin{proof}
+Write $C_P(\tau;H,T,\nu^2(H,\lambda^2)) = \frac{\lambda^2}{2H(1-2H)}[T^{2H}-\tau^{2H}]$. Fix $T,\tau,\lambda^2$ and expand $x^{2H}=e^{2H\log x}=1+2H\log x+O(H^2)$ as $H\to0$, so $T^{2H}-\tau^{2H} = 2H\log(T/\tau)+O(H^2)$. Substituting and taking $H\to0$ gives $\frac{\lambda^2}{2H(1-2H)}\cdot 2H\log(T/\tau)+O(H) \to \lambda^2\log(T/\tau)$, since $(1-2H)\to1$.
+\end{proof}
+
+This nesting licenses a proper boundary-corrected likelihood-ratio test of $H=0$ (genuine cascade) against $H>0$ (self-affine), using a Whittle/GLS Gaussian likelihood on an estimated, bias-corrected log-volatility proxy. Because $H=0$ sits at the edge of the parameter space $H\in[0,1/2)$, the asymptotic null of the likelihood-ratio statistic is a Self--Liang mixture-$\chi^2$ \citep{selfliang1987}, not the ordinary Wilks $\chi^2_1$.
+
+For the Jensen-gap bias in (a), a second-order cumulant correction is available: writing $\log(\mathrm{RV}_t/\Delta) \approx \bar\omega_t + \tfrac12 v_t - \tfrac18 v_t^2$ for the within-window log-vol fluctuation $v_t$, the bias-corrected proxy $\hat Z_t = \log(\mathrm{RV}_t/\Delta) - \tfrac12\hat v_t + \tfrac18\hat v_t^2$ removes the leading-order distortion, with a residual scaling as $O(v_t^3)$. Flaw (c) is resolved by fitting the surrogate noise distribution empirically from devolatized returns rather than assuming one.
+
+\begin{finding}
+The repaired test is easier to implement than the original structure-function approach: it requires only covariance estimates at $K$ log-spaced lags, versus a full family of high-order moment estimates. It needs roughly $10^4$--$10^5$ observations spanning several decades of scale for reliable discrimination near the boundary.
+\end{finding}
+
+\section{Evaluation}
+
+\subsection{Monte Carlo validation against known ground truth}
+
+We simulated $150$ independent stationary Gaussian paths ($N=1{,}500$) under each of two known ground truths -- (i) self-affine power-law covariance at $H=0.10$, and (ii) genuine log-covariance cascade -- via direct Cholesky factorization of \eqref{eq:cov-power} and \eqref{eq:cov-log}, and applied a simplified AIC-based version of the nested test (comparing a 3-parameter power fit against a 2-parameter log fit of the empirical autocovariance).
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+Ground truth & Correctly classified & $n$ \\
+\midrule
+Log-covariance (genuine cascade) & $78.0\%$ & $150$ \\
+Power-law, $H=0.10$ & $50.0\%$ & $150$ \\
+\bottomrule
+\end{tabular}
+\caption{Monte Carlo classification accuracy of the AIC-simplified nested test.}
+\label{tab:mc}
+\end{table}
+
+\begin{finding}
+The simplified diagnostic reliably detects genuine log-covariance ($78\%$) but is statistically indistinguishable from chance at detecting $H=0.10$ roughness specifically ($50\%$) at this sample size. This is not evidence against the diagnostic's underlying logic (Proposition~1 is exact), but it is a genuine, reported limitation of the AIC-simplified implementation used here, which should be replaced with the full Self--Liang boundary-corrected likelihood-ratio test before the diagnostic is trusted on real data.
+\end{finding}
+
+\subsection{Application to real market data}
+
+We fetched fifteen years of daily OHLC data for the S\&P~500 index and 25 large-cap constituents (July 2011--July 2026) and built a Parkinson range-based daily log-volatility proxy, $\hat\omega_t = \log\!\left[\frac{(\log(H_t/L_t))^2}{4\log2}\right]$, in place of true high-frequency realized variance (unavailable to us).
+
+A simple structure-function-slope Hurst estimator cleanly reproduces the textbook pattern: the index's $\hat H = 0.094$ exceeds every one of the 25 single names (range $0.047$--$0.076$, mean $0.058$). Applying instead the nested power-vs-log AIC test built in Section~\ref{sec:diagnostic} to the \emph{same} data complicates this picture substantially: $21$ of $26$ series -- including the index itself -- statistically favor the $H=0$ (log-covariance) boundary once the extra-parameter penalty is applied, with fitted $H$ collapsing toward the numerical boundary in most cases. Only a handful of large, historically volatile names (AMZN, CVX, XOM, GOOGL, META) show a statistically preferred positive $H$ over this sample.
+
+\begin{finding}
+Two reasonable estimators applied to the same real series give materially different qualitative answers about whether that series looks like a genuine cascade or a self-affine rough process. This is a direct, self-contained empirical illustration of the estimator-fragility concern raised by \citet{fukasawa2022rough} and \citet{lebaron2001stochastic}: small-$H$ roughness estimates are not robust to estimator choice, which is precisely why the genuineness question in this paper remains materially open.
+\end{finding}
+
+\section{Findings summary}
+
+\begin{itemize}
+\item \labelestablished{} that the distributional/temporal confound is real and regime-dependent for rough Bergomi (\citealp{brandi2026multiscaling}, independently verified).
+\item \labelplausible{} that classical MRW's own multiscaling is genuinely temporal, resting on a single validation data point plus a real tension against real-market decomposition studies.
+\item \labelplausible{} for the repaired diagnostic's soundness in principle; \labelnegative{} for its practical readiness as implemented (asymmetric Monte Carlo power).
+\item \labelplausible{}, with a real complicating result, for the specific empirical claim that observed single-stock and index roughness genuinely reflect temporal dynamics rather than substantially reflecting estimator artifacts.
+\end{itemize}
+
+\confidence{See per-claim labels above; no single overall label applies to the whole paper.}
+
+\section{Future directions}
+
+\begin{enumerate}
+\item Run the full boundary-corrected Self--Liang likelihood-ratio test (rather than the AIC approximation used here) on a larger sample with true high-frequency realized variance in place of the Parkinson proxy.
+\item Extend \citet{brandi2026multiscaling}'s surrogate methodology to log S-fBM directly, across its full $H$ range rather than only at the two endpoints.
+\item Reconcile the model-level finding (MRW is temporal-dominant) with the market-level finding (\citealp{zhou2009finite}, \citealp{jiang2012understanding}: observed multifractality is mainly distributional) -- either by testing whether log S-fBM with realistic parameters actually reproduces the market-level distributional dominance, or by identifying a methodological difference driving the discrepancy.
+\item Investigate whether the estimator discrepancy found in Section~4.2 is itself informative -- e.g., whether it correlates with liquidity, sector, or historical volatility regime across the 25 names tested.
+\end{enumerate}
+
+\section*{Acknowledgments}
+This paper synthesizes research conducted by an orchestrated multi-agent AI investigation (documented in the companion technical report and reproducibility scripts in this repository), with all citations independently re-verified against primary sources and all numerical claims re-run and confirmed before inclusion here.
+
+\bibliographystyle{plainnat}
+\begin{thebibliography}{99}
+
+\bibitem[Bacry and Muzy(2003)]{bacry2003multifractal}
+E.~Bacry and J.-F.~Muzy.
+\newblock Log-infinitely divisible multifractal processes.
+\newblock \emph{Communications in Mathematical Physics}, 236(3):449--475, 2003.
+
+\bibitem[Brandi and Di~Matteo(2026)]{brandi2026multiscaling}
+G.~Brandi and T.~Di~Matteo.
+\newblock Multiscaling in the rough Bergomi model: a tale of tails.
+\newblock \emph{arXiv:2601.11305}, 2026.
+
+\bibitem[Fukasawa et al.(2022)]{fukasawa2022rough}
+M.~Fukasawa, T.~Takabatake, and R.~Westphal.
+\newblock Is volatility rough?
+\newblock \emph{arXiv:1905.04852}, 2022.
+
+\bibitem[Jiang et al.(2012)]{jiang2012understanding}
+Z.-Q.~Jiang, W.-J.~Xie, W.-X.~Zhou, and D.~Sornette.
+\newblock Understanding the source of multifractality in financial markets.
+\newblock \emph{arXiv:1201.1535}, 2012.
+
+\bibitem[Kahane(1985)]{kahane1985chaos}
+J.-P.~Kahane.
+\newblock Sur le chaos multiplicatif.
+\newblock \emph{Annales de la Facult\'e des Sciences de Toulouse}, 9(2):105--150, 1985.
+
+\bibitem[LeBaron(2001)]{lebaron2001stochastic}
+B.~LeBaron.
+\newblock Stochastic volatility as a simple generator of financial power-laws and long memory.
+\newblock \emph{Quantitative Finance}, 1(6):621--631, 2001.
+
+\bibitem[Rak and Grech(2018)]{rak2018quantitative}
+R.~Rak and D.~Grech.
+\newblock Quantitative approach to multifractality induced by correlations and broad distribution of data.
+\newblock \emph{Physica A}, 508:48--66, 2018.
+
+\bibitem[Rhodes and Vargas(2014)]{rhodes2014gaussian}
+R.~Rhodes and V.~Vargas.
+\newblock Gaussian multiplicative chaos and applications: a review.
+\newblock \emph{Probability Surveys}, 11:315--392, 2014.
+
+\bibitem[Self and Liang(1987)]{selfliang1987}
+S.~G.~Self and K.-Y.~Liang.
+\newblock Asymptotic properties of maximum likelihood estimators and likelihood ratio tests under nonstandard conditions.
+\newblock \emph{Journal of the American Statistical Association}, 82(398):605--610, 1987.
+
+\bibitem[Wu et al.(2022)]{wu2022rough}
+Q.~Wu, J.-F.~Muzy, and E.~Bacry.
+\newblock From rough to multifractal volatility: the log S-fBM model.
+\newblock \emph{Physica A}, 604:127919, 2022. arXiv:2201.09516.
+
+\bibitem[Zhou(2009)]{zhou2009finite}
+W.-X.~Zhou.
+\newblock Finite-size effect and the components of multifractality in financial volatility.
+\newblock \emph{arXiv:0912.4782}, 2009.
+
+\end{thebibliography}
+
+\end{document}
