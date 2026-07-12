@@ -1,0 +1,44 @@
+% Shared preamble for the log S-fBM research paper series.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{finprobs}[2026/07/12 shared macros for log S-fBM paper series]
+
+\RequirePackage[margin=1in]{geometry}
+\RequirePackage{amsmath,amssymb,amsthm}
+\RequirePackage{bm}
+\RequirePackage{hyperref}
+\RequirePackage{natbib}
+\RequirePackage{booktabs}
+\RequirePackage{enumitem}
+\RequirePackage{xcolor}
+
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, citecolor=blue!50!black, urlcolor=blue!40!black}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{finding}[theorem]{Finding}
+\newtheorem{openproblem}[theorem]{Open Problem}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{caveat}[theorem]{Caveat}
+
+% Confidence-label box, matching the reporting convention used across this series:
+% Established / Plausible but unverified / Speculative / Negative result.
+\newcommand{\labelestablished}{\textbf{\textcolor{green!40!black}{Established}}}
+\newcommand{\labelplausible}{\textbf{\textcolor{orange!70!black}{Plausible but unverified}}}
+\newcommand{\labelspeculative}{\textbf{\textcolor{purple!60!black}{Speculative}}}
+\newcommand{\labelnegative}{\textbf{\textcolor{red!60!black}{Negative result}}}
+\newcommand{\confidence}[1]{\par\smallskip\noindent\textit{Confidence label:} #1\par\smallskip}
+
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\E}{\operatorname{\mathbb{E}}}
+
+\endinput

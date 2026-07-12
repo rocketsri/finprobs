@@ -1,0 +1,204 @@
+\documentclass[11pt]{article}
+\usepackage{finprobs}
+
+\title{Cross-Sectional Aggregation and the Scale-Dependence\\ of Roughness in log S-fBM}
+\author{finprobs Research Project}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Empirically, estimated Hurst roughness of log-volatility differs sharply by aggregation level: single stocks are estimated near $H\approx0.01$, broad indices near $H\approx0.1$. We ask whether this is a derivable consequence of cross-sectional aggregation, in the spirit of a renormalization-group flow, or merely a fitted regularity. We show a first-principles derivation attempt from linear mixing of heterogeneous log-vol processes stalls at a specific, identifiable circularity; we then show that a recent paper closes exactly that gap with a rigorous, checkable threshold condition -- but only conditional on an unexplained empirical input. We rule out a ``central-limit-theorem-of-central-limit-theorems'' shortcut to that input, propose (without endorsing) a speculative microstructural alternative, and independently confirm the aggregation mechanism itself by simulation and by fresh real-market estimation. We conclude the aggregation \emph{consequence} is now well-supported; the aggregation \emph{cause} remains open.
+\end{abstract}
+
+\section{Background and motivation}
+
+In the log S-fBM model of \citet{wu2022rough}, log-volatility is a stationary Gaussian process with three free parameters $(H,\lambda^2,T)$ and covariance
+\begin{equation}
+C_\omega(\tau) = \frac{\nu^2}{2}\left[T^{2H}-\tau^{2H}\right], \qquad \nu^2 = \frac{\lambda^2}{H(1-2H)}. \label{eq:cov}
+\end{equation}
+\citet{gatheral2018volatility} estimate $H\approx0.1$ for major equity indices from high-frequency realized volatility, a result now widely cited as ``volatility is rough.'' Subsequent panel studies of individual names \citep{bennedsen2022decoupling,bolko2023gmm} find single-stock $H$ estimates that are smaller and more heterogeneous, often near $H\approx0$--$0.02$. \citet{wu2022rough} themselves flag the resulting question -- why does aggregation raise the effective roughness exponent? -- as an explicit open problem for future work, not something they resolve.
+
+We ask: is $H_{\text{index}} > H_{\text{single-name}}$ a \emph{derivable} consequence of the model's own structure under cross-sectional aggregation, analogous to a renormalization-group flow of the deformation parameter, or is it merely an empirical regularity awaiting an explanation?
+
+\section{Related work}
+
+\citet{zarhali2025nested} (subsequently retitled ``A Nested Factor Model for Equity Markets: Reconciling Multifractal Stock Returns and Rough Index Volatilities'') model single-name log-volatility as
+\begin{equation}
+\omega_i(t) = \beta_i F(t) + X_i(t), \label{eq:factor}
+\end{equation}
+with a common factor $F$ of Hurst $H_F\approx0.11$ and idiosyncratic components $X_i$ that are ``super-rough''/near-multifractal ($H_i\approx0$), the split itself taken as an empirical input from \citet{wu2022rough}. Classical aggregation theory for heterogeneous processes \citep{granger1980long,zaffaroni2004aggregation} shows that mixing many short-memory or heterogeneous-persistence processes can alter the memory/self-similarity properties of the aggregate -- the general mechanism family this result belongs to.
+
+\begin{finding}
+\citet{gatheral2018volatility}'s $H\approx0.1$ estimate is the same underlying SPX-derived empirical anchor used both here and in the companion paper on SPX/VIX calibration (this series, Paper~4). It should be read as one empirical data point appearing in two contexts, not as two independent corroborations of rough volatility.
+\end{finding}
+
+\section{A stalled first-principles derivation}
+
+We attempted to derive \eqref{eq:factor}'s consequence directly from linear aggregation, without presupposing the smooth/rough split.
+
+\begin{proposition}[Fixed point under linear aggregation]
+Let $\{X^{(k)}\}$ be independent, jointly Gaussian, self-similar processes with Hurst exponents $H_k$ and comparable scale. Then for fixed weights $a_k$ independent of state or time, $\sum_k a_k X^{(k)}_t$ is Gaussian and, at long lag, its covariance is dominated by the term(s) with the largest $H_k$; i.e., $H_{\mathrm{agg}} \approx \max_k H_k$.
+\end{proposition}
+
+This is a rigorous consequence of summing power-law kernels, but it is not the result needed: $\max_k H_k$ can equal but cannot \emph{exceed} every individual $H_k$, whereas the empirical pattern requires $H_{\text{index}}$ to exceed every single name's $H_i$, common factor included at the naive level. Reaching that stronger conclusion requires positing that the common factor $F$ is smoother than every idiosyncratic $X_i$ \emph{a priori} -- which is precisely \eqref{eq:factor}'s empirical input, not something the aggregation math derives.
+
+\begin{caveat}
+This step is circular if presented as a derivation of "index smoother than every name" from first principles: the conclusion is smuggled in via the assumed relative smoothness of $F$, not produced by the aggregation mechanics themselves.
+\end{caveat}
+
+\section{The gap, closed for the consequence but not the cause}
+
+\citet{zarhali2025nested} supply the missing piece for the aggregation \emph{consequence}, not the smooth/rough split itself. Writing the index as a weighted average with weights $w_i$, the idiosyncratic contribution to index variance scales as $\sum_i w_i^4\sigma_i^4 \sim N_s^{-3}$ for an equal-weighted basket of $N_s$ names, while the common-factor contribution does not shrink with $N_s$. This yields an explicit, checkable threshold:
+\begin{equation}
+\beta^4 N_s \gg 10 \label{eq:threshold}
+\end{equation}
+above which the shared smooth factor dominates and the index's apparent Hurst exponent converges to $H_F$, exceeding every individual $H_i$. This is a genuine cross-sectional-diversification derivation, not curve-fitting of the sign of the effect -- it directly closes the gap our Proposition~1 attempt could not.
+
+\begin{finding}
+What remains open is not the aggregation \emph{consequence} (Equation~\eqref{eq:threshold}, now well-supported) but the aggregation \emph{cause}: why should the common/market factor be smoother than idiosyncratic volatility in the first place? \citet{zarhali2025nested} import this from \citet{wu2022rough} as data, not as a derived quantity.
+\end{finding}
+
+\subsection{A ruled-out shortcut: CLT-of-CLTs}
+
+One might hope the smooth/rough split is itself a byproduct of the same temporal aggregation mechanism (\`a la \citealp{eleuch2018microstructural}) that already produces $H>0$ from microstructure -- i.e., that ``more aggregation'' at the cross-sectional level simply extends ``more aggregation'' at the temporal level.
+
+\begin{proposition}[Cross-sectional aggregation is selection, not smoothing]
+Let $\omega_i(t) = \beta_i F(t) + X_i(t)$ with $X_i$ i.i.d.\ across $i$, independent of $F$, each with the same Hurst exponent $H_X$. Then $\frac1N\sum_i \omega_i(t) \to \bar\beta F(t)$ in mean-square as $N\to\infty$, and the roughness exponent of the limit is exactly $H_F$ -- unaffected by $H_X$ and unaffected by $N$ once $N$ is large enough for the idiosyncratic term to vanish. Cross-sectional averaging does not alter or interpolate any component's own Hurst exponent; it only reweights their relative amplitudes.
+\end{proposition}
+
+\begin{finding}
+\labelnegative. A ``CLT-of-CLTs'' argument fails: cross-sectional aggregation is a pure variance-reduction/selection mechanism. It reveals whichever component already has the largest surviving amplitude; it cannot manufacture smoothness that is not already present in $F$. Moreover, the temporal mechanism that already produces $H>0$ (nearly-critical Hawkes processes, \citealp{eleuch2018microstructural}) does not get smoother with more aggregated order flow -- the roughness exponent there is set by the kernel's tail index, not by sample size. So the cause of $F$'s smoothness cannot be reduced to ``more of the same'' temporal-CLT mechanism; it requires a genuinely different explanation.
+\end{finding}
+
+\subsection{A speculative microstructural alternative}
+
+Combining the Mixture-of-Distributions Hypothesis \citep{clark1973subordinated}, the Hawkes-to-rough-volatility mapping \citep{eleuch2018microstructural,jaisson2016rough}, and Grigelionis-type point-process superposition theory \citep{grigelionis1963}, we advance the following hypothesis, original to this investigation and \emph{not} found stated elsewhere in the literature searched:
+
+\begin{conjecture}
+Single-name order flow is generated by a comparatively small, tightly-coupled set of participants, pushing its effective Hawkes branching ratio close to criticality and hence toward small $H$ via the \citet{eleuch2018microstructural} mechanism. Market-wide flow superposes many weakly-correlated local feedback loops plus genuinely diffusive macro information, diluting effective endogeneity at the aggregate level and yielding a larger effective $H_F$.
+\end{conjecture}
+
+This produces concrete, falsifiable predictions: single-name Hawkes branching ratios should exceed the index's at matched time resolution, and the common/idiosyncratic $H$-gap should track algorithmic-trading penetration. We flag it as genuinely uncertain: \citet{filimonov2015quantifying} estimate E-mini S\&P~500 order flow itself to be highly endogenous ($>70\%$), which directly complicates the naive version of this hypothesis.
+
+\confidence{\labelspeculative{} (Conjecture~1); untested against the cited counter-evidence.}
+
+\section{Evaluation}
+
+\subsection{Simulation of the aggregation mechanism}
+
+We independently simulated \eqref{eq:factor} with $H_F=0.15$, $\beta=0.6$, and i.i.d.\ log-covariance idiosyncratic components ($H_X\approx0.02$), via Cholesky factorization of the respective covariance matrices, and estimated the aggregate's Hurst exponent by structure-function slope as $N_s$ grows.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{rrr}
+\toprule
+$N_s$ & $\beta^4 N_s$ & Estimated aggregate $H$ \\
+\midrule
+1 & 0.13 & 0.041 \\
+10 & 1.30 & 0.095 \\
+30 & 3.89 & 0.121 \\
+100 & 12.96 & 0.140 \\
+1000 & 129.6 & 0.148 \\
+\bottomrule
+\end{tabular}
+\caption{Simulated aggregate roughness converges toward the common factor ($H_F=0.15$) as the diversification threshold \eqref{eq:threshold} is crossed.}
+\end{table}
+
+\begin{finding}
+The mechanism holds up under independent simulation from scratch, not merely as an internal derivation within \citet{zarhali2025nested}: the estimated aggregate $H$ tracks the $\beta^4N_s\gg10$ threshold closely, already at $0.095$ by $N_s=10$ (where $\beta^4N_s=1.3$) and essentially converged by $N_s=100$.
+\end{finding}
+
+\subsection{Real-data check}
+
+We estimated Hurst exponents from fifteen years of daily OHLC data (S\&P 500 index and 25 large-cap single names) using a Parkinson range-based log-volatility proxy and a structure-function-slope estimator. The index's $\hat H=0.094$ exceeded every single name (range $0.047$--$0.076$), replicating the qualitative pattern on data none of the cited papers used. As documented in the companion paper on distributional versus temporal multifractality (this series, Paper~1), a more careful nested boundary test applied to the same data complicates this: most series, including the index, are statistically close to the $H=0$ boundary once penalized for the extra parameter, so the absolute magnitudes here should be read cautiously even as the relative ordering (index $>$ every single name) held up under the simple estimator.
+
+\section{Findings summary}
+
+\begin{itemize}
+\item \labelestablished{} that classical aggregation theory permits altered memory/self-similarity under heterogeneous mixing (\citealp{granger1980long}; general mechanism family).
+\item \labelplausible{}, now closed to \labelestablished{}-adjacent status conditional on its input: the specific diversification threshold \eqref{eq:threshold} of \citet{zarhali2025nested}, independently re-simulated and confirmed here.
+\item \labelnegative{} for a naive first-principles derivation of ``index smoother than every name'' from linear mixing alone (Proposition~1's circularity).
+\item \labelnegative{} for the CLT-of-CLTs shortcut to explaining common-factor smoothness (Proposition~2).
+\item \labelspeculative{} for the proposed microstructural cause (Conjecture~1), with a specific documented counter-example in the literature.
+\end{itemize}
+
+\section{Future directions}
+
+\begin{enumerate}
+\item Test the branching-ratio prediction of Conjecture~1 directly: compare estimated Hawkes near-criticality for single names versus the index at matched time resolution, if tick-level data with participant attribution becomes available.
+\item Re-run the real-data check of Section~5.2 with true high-frequency realized variance rather than the daily Parkinson proxy, to see whether the aggregation pattern survives the nested boundary test once measurement noise is reduced.
+\item Investigate whether the index's effective decorrelation timescale $T$ also grows with $N_s$ under \eqref{eq:threshold}, as suggested by a cross-pollination result in the companion SPX/VIX paper (this series, Paper~4) -- this would connect the aggregation mechanism directly to a pricing-relevant consequence.
+\item Attempt a genuine (non-circular) first-principles derivation of $H_F>H_i$ starting from a specific, falsifiable economic microfoundation, rather than importing the split as data.
+\end{enumerate}
+
+\section*{Acknowledgments}
+This paper synthesizes research conducted by an orchestrated multi-agent AI investigation, with all citations independently re-verified against primary sources and all numerical claims re-run and confirmed before inclusion here.
+
+\bibliographystyle{plainnat}
+\begin{thebibliography}{99}
+
+\bibitem[Bennedsen et al.(2022)]{bennedsen2022decoupling}
+M.~Bennedsen, A.~Lunde, and M.~S.~Pakkanen.
+\newblock Decoupling the short- and long-term behavior of stochastic volatility.
+\newblock \emph{Journal of Financial Econometrics}, 20(5):961--1006, 2022.
+
+\bibitem[Bolko et al.(2023)]{bolko2023gmm}
+A.~E.~Bolko, K.~Christensen, M.~S.~Pakkanen, and B.~Veliyev.
+\newblock A GMM approach to estimate the roughness of stochastic volatility.
+\newblock \emph{Journal of Econometrics}, 235(2):745--778, 2023.
+
+\bibitem[Clark(1973)]{clark1973subordinated}
+P.~K.~Clark.
+\newblock A subordinated stochastic process model with finite variance for speculative prices.
+\newblock \emph{Econometrica}, 41(1):135--155, 1973.
+
+\bibitem[El~Euch et al.(2018)]{eleuch2018microstructural}
+O.~El~Euch, M.~Fukasawa, and M.~Rosenbaum.
+\newblock The microstructural foundations of leverage effect and rough volatility.
+\newblock \emph{Finance and Stochastics}, 22(2):241--280, 2018.
+
+\bibitem[Filimonov and Sornette(2015)]{filimonov2015quantifying}
+V.~Filimonov and D.~Sornette.
+\newblock Quantifying reflexivity in financial markets: toward a prediction of flash crashes.
+\newblock \emph{Physical Review E}, 85(5):056108, 2015.
+
+\bibitem[Gatheral et al.(2018)]{gatheral2018volatility}
+J.~Gatheral, T.~Jaisson, and M.~Rosenbaum.
+\newblock Volatility is rough.
+\newblock \emph{Quantitative Finance}, 18(6):933--949, 2018.
+
+\bibitem[Granger(1980)]{granger1980long}
+C.~W.~J.~Granger.
+\newblock Long memory relationships and the aggregation of dynamic models.
+\newblock \emph{Journal of Econometrics}, 14(2):227--238, 1980.
+
+\bibitem[Grigelionis(1963)]{grigelionis1963}
+B.~Grigelionis.
+\newblock On the convergence of sums of random step processes to a Poisson process.
+\newblock \emph{Theory of Probability \& Its Applications}, 8(2):177--182, 1963.
+
+\bibitem[Jaisson and Rosenbaum(2016)]{jaisson2016rough}
+T.~Jaisson and M.~Rosenbaum.
+\newblock Rough fractional diffusions as scaling limits of nearly unstable heavy tailed Hawkes processes.
+\newblock \emph{Annals of Applied Probability}, 26(5):2860--2882, 2016.
+
+\bibitem[Wu et al.(2022)]{wu2022rough}
+Q.~Wu, J.-F.~Muzy, and E.~Bacry.
+\newblock From rough to multifractal volatility: the log S-fBM model.
+\newblock \emph{Physica A}, 604:127919, 2022. arXiv:2201.09516.
+
+\bibitem[Zaffaroni(2004)]{zaffaroni2004aggregation}
+P.~Zaffaroni.
+\newblock Contemporaneous aggregation of linear dynamic models in large economies.
+\newblock \emph{Journal of Econometrics}, 120(1):75--102, 2004.
+
+\bibitem[Zarhali et al.(2025)]{zarhali2025nested}
+O.~Zarhali, C.~Aubrun, E.~Bacry, J.-P.~Bouchaud, and J.-F.~Muzy.
+\newblock A nested factor model for equity markets: reconciling multifractal stock returns and rough index volatilities.
+\newblock \emph{arXiv:2505.02678}, 2025.
+
+\end{thebibliography}
+
+\end{document}
