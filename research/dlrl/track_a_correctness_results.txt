@@ -1,0 +1,41 @@
+==========================================================================
+CORRECTNESS CHECK  --  near-Black-Scholes limit
+==========================================================================
+  params: H=0.499  lambda^2=1e-06  T=0.5  ->  nu2=1.002e-03
+  Var(omega)=C(0)=2.508e-04  => vol wobble std ~ 0.792%
+  sigma0=0.2  rho=-0.7  maturity=21 days (T_total=0.0833y)  kappa=0.0001
+  BS ATM call premium (sigma0) = 0.023030
+  simulated 8k train + 20k test paths in 0.4s
+  sanity: realised annualised vol of paths = 0.1998 (target sigma0=0.2)  |  vol path range [0.1937,0.2068]
+  training deep hedger (entropic risk, gamma=10)...
+    epoch   1/60  entropic-risk=+0.005429
+    epoch  15/60  entropic-risk=+0.000424
+    epoch  30/60  entropic-risk=+0.000404
+    epoch  45/60  entropic-risk=+0.000386
+    epoch  60/60  entropic-risk=+0.000382
+  trained in 18.8s
+--------------------------------------------------------------------------
+(a) terminal hedging-error distribution (test, 20k paths)
+    Deep hedger       mean=-0.00018  std=0.00631  CVaR95(loss)=+0.01287  |  as %notional std=0.631%
+    BS delta-hedge    mean=-0.00021  std=0.00432  CVaR95(loss)=+0.01033  |  as %notional std=0.432%
+    std ratio  NN / BS = 1.462
+--------------------------------------------------------------------------
+(b) learned hedge ratio vs BS delta (tau=0.0794y, rv=sigma0)
+    correlation(delta_NN, delta_BS) = 0.9992
+    max |delta_NN - delta_BS|        = 0.1690
+    monotone non-decreasing in moneyness = True
+      log-moneyness   delta_NN   delta_BS
+        -0.100      -0.1286    0.0403
+        -0.075      -0.0319    0.0963
+        -0.050       0.0982    0.1951
+        -0.025       0.2611    0.3389
+        +0.000       0.4439    0.5112
+        +0.025       0.6236    0.6815
+        +0.050       0.7786    0.8201
+        +0.075       0.8992    0.9130
+        +0.100       0.9853    0.9643
+==========================================================================
+  shape criterion  (corr>0.98, monotone, max|d|<0.12): False
+  error criterion  (|mean|<0.01, std_ratio<1.5)      : True
+  CORRECTNESS CHECK PASSED = False
+==========================================================================
