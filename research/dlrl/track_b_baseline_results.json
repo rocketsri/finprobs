@@ -1,7 +1,8 @@
 {
   "config": {
-    "n_steps": 60000,
-    "rolling_vol_window": 20,
+    "n_steps": 600000,
+    "vol_proxy": "non_overlapping_block_realized_variance",
+    "block_length": 20,
     "n_shuffles": 40,
     "lags": [
       2,
@@ -30,21 +31,51 @@
       3.0,
       4.0
     ],
-    "branching_fast": 0.6428571428571429,
-    "branching_slow": 0.45000000000000007
+    "n_fast": 3,
+    "n_slow": 2,
+    "branching_fast": 0.7000000000000001,
+    "branching_slow": 0.6999999999999994
   },
   "genuineness": {
-    "curv_raw": -0.016720178406962313,
-    "curv_shuf_mean": 1.4473380904836454e-05,
-    "curv_shuf_std": 0.00011363818743042879,
-    "frac_distributional": 0.000865623592796696,
-    "frac_temporal": 0.9991343764072033,
-    "z_excess_over_shuffle": 147.00784484339817
+    "curv_raw": -0.00023087473926649174,
+    "curv_shuf_mean": -4.334378297409464e-05,
+    "curv_shuf_std": 0.0002062615493577852,
+    "frac_distributional": 0.1877372254400869,
+    "frac_temporal": 0.8122627745599131,
+    "z_excess_over_shuffle": 0.9091900883916193
   },
-  "return_excess_kurtosis": 0.10830545231269095,
+  "return_excess_kurtosis": 0.4792530313610093,
   "absret_autocorr": {
-    "lag1": 0.03270710981342186,
-    "lag50": -0.0023322645372162508,
-    "lag200": -0.0024098046036591697
-  }
+    "lag1": 0.13229833081695772,
+    "lag50": 0.0024092718773326624,
+    "lag200": 0.001963239292234443
+  },
+  "blockvol_autocorr": {
+    "lag1": 0.099730345558579,
+    "lag5": 0.023259851746309058,
+    "lag20": 0.00835251508614112,
+    "lag50": -0.008588468524276442
+  },
+  "calibration": {
+    "genuine_multifractal_cascade": {
+      "curv_raw": -0.00191899819885434,
+      "curv_shuf_mean": 7.594929191902444e-06,
+      "curv_shuf_std": 0.0001912249253152366,
+      "frac_temporal": 0.9960422426678479,
+      "z_excess_over_shuffle": 9.995575976884112,
+      "return_excess_kurtosis": 43.342503555074835,
+      "n_blocks": 26214
+    },
+    "linear_longmemory_gaussian_sv": {
+      "curv_raw": -0.00019652336860888754,
+      "curv_shuf_mean": -3.1234513451803285e-06,
+      "curv_shuf_std": 0.00016636140341736252,
+      "frac_temporal": 0.9841064634333818,
+      "z_excess_over_shuffle": 1.1625287674359857,
+      "return_excess_kurtosis": 1.8860847289303866,
+      "n_blocks": 26200
+    },
+    "interpretation": "z ~ +1 == long-range dependence but NO genuine cascade (linear-SV control); z ~ +10 == genuine multifractal cascade. z_excess_over_shuffle is the honest metric; frac_temporal is unreliable when curv_raw ~ 0 (denominator -> 0)."
+  },
+  "conclusion": "Baseline z ~ 0.91 sits at the linear-SV (LRD-only) level and far below the genuine-cascade level: matches the analytic prediction -- linear Hawkes superposition gives long-range dependence at most, NOT genuine multifractal cascade."
 }

@@ -1,0 +1,160 @@
+{
+  "config": {
+    "n_obs": 15000,
+    "W": 40,
+    "impact": 0.01,
+    "fast": {
+      "mu": 0.3,
+      "kappa": 0.2,
+      "alpha": 0.7
+    },
+    "slow": {
+      "mu": 0.3,
+      "kappa": 0.99,
+      "alpha": 0.0098
+    }
+  },
+  "sim_diag": {
+    "mean_lam_fast": 2.404685,
+    "mean_lam_slow": 15.372013333333333,
+    "frac_fast_var": 0.13504760229540422
+  },
+  "vol_proxy_white_control_acf": [
+    0.0016747548427710577,
+    -0.0054106169229416025,
+    -0.006606000878811652,
+    -0.010398267270620416
+  ],
+  "logvol_moments": {
+    "mean": -2.6812035036322333,
+    "std": 0.27011334569960854,
+    "exkurt": 0.052810835320780125
+  },
+  "return_structure_sanity": {
+    "lags": [
+      1,
+      2,
+      5,
+      10,
+      20,
+      50,
+      100
+    ],
+    "exkurt_r_fine": 0.14225261237464792,
+    "exkurt_r_bar": 0.07992851138458734,
+    "acf_r_fine": [
+      -0.00202060610398192,
+      1.7490769636465727e-05,
+      0.0027201521171712497,
+      3.787489301935263e-05,
+      -0.0010539817265364868,
+      -0.0006575750907483818,
+      -0.0014273964038991108
+    ],
+    "acf_absr_fine": [
+      0.012950318307352517,
+      0.012196402838453758,
+      0.009250021951866153,
+      0.00799928559927095,
+      0.005480269744296572,
+      0.005658754242036002,
+      0.004891295702300481
+    ],
+    "acf_r_bar": [
+      -0.0052588349763869734,
+      0.0007108263993181285,
+      0.009340856849589595,
+      -0.010442569387395411,
+      0.0019260066083074737,
+      0.00874332939877853,
+      0.007535178898161128
+    ],
+    "acf_logvol": [
+      0.18844098012688396,
+      0.18154145500806917,
+      0.17601150441750366,
+      0.16880487235198557,
+      0.15707457224139224,
+      0.12122017133331357,
+      0.09178060775686273
+    ]
+  },
+  "has_genuine_structure": true,
+  "surrogate_result": {
+    "qs": [
+      0.5,
+      1.0,
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      4.0
+    ],
+    "lags": [
+      2,
+      3,
+      4,
+      5,
+      7,
+      10,
+      14,
+      19,
+      26,
+      36,
+      50,
+      69,
+      95,
+      131,
+      181,
+      250
+    ],
+    "zeta_raw": [
+      0.009966837465672859,
+      0.019474756605548996,
+      0.028668573083723066,
+      0.037583764976304355,
+      0.04628459220859418,
+      0.05485341243949846,
+      0.07195577075403495
+    ],
+    "curv_raw": -0.0004329624478604827,
+    "curv_shuf_mean": 5.677302877386684e-06,
+    "curv_shuf_std": 0.0002656811490318768,
+    "frac_distr": 0.013112691193985792,
+    "frac_temporal": 0.9868873088060142,
+    "z_excess": -1.6510006475252035,
+    "n_shuffles": 100
+  },
+  "robustness_seeds": [
+    {
+      "seed": 20260718,
+      "curv_raw": -0.0004329624478604827,
+      "z_excess": -1.4151931970239195
+    },
+    {
+      "seed": 1,
+      "curv_raw": -0.000231615270995213,
+      "z_excess": -0.9935991495487976
+    },
+    {
+      "seed": 77,
+      "curv_raw": 2.912343969560128e-05,
+      "z_excess": 0.1660164930619785
+    },
+    {
+      "seed": 2024,
+      "curv_raw": -0.00034622867112456935,
+      "z_excess": -1.3484600797387234
+    },
+    {
+      "seed": 555,
+      "curv_raw": -0.00010621052362256988,
+      "z_excess": -0.14823225090454684
+    }
+  ],
+  "z_excess_mean": -0.7478936368308018,
+  "z_excess_std": 0.642053807348364,
+  "curv_raw_flips_sign_across_seeds": true,
+  "genuine_cascade_detected": false,
+  "verdict": "NO genuine multifractal cascade: long-range dependence is clearly present (persistent logvol acf, positive zeta(2)) but zeta(q) is essentially LINEAR -- |curvature| ~ shuffle noise (~50-100x below real-market ~0.01-0.05), excess-curvature z is centered on 0 across seeds and curv_raw flips sign. Matches the proven-negative theory for plain linear superposition (monofractal LRD, no cascade). The high 'temporal fraction' from the ratio metric is a divide-noise-by-noise artifact, NOT a genuine signal."
+}

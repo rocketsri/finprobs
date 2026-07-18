@@ -1,0 +1,149 @@
+{
+  "design": "linear superposition of TWO independent self-exciting signed-Poisson (discrete Hawkes) order-flow populations at fast & slow timescales; linear price impact; non-overlapping block-RV volatility proxy",
+  "n_bins": 400000,
+  "block": 40,
+  "params": {
+    "fast_mu": 0.22,
+    "fast_alpha": 0.0368,
+    "fast_decay": 0.96,
+    "c_fast": 1.0,
+    "slow_mu": 0.06,
+    "slow_alpha": 0.0018,
+    "slow_decay": 0.998,
+    "c_slow": 1.6
+  },
+  "branching_ratio": {
+    "fast": 0.9199999999999992,
+    "slow": 0.8999999999999991
+  },
+  "vol_proxy": "log realized variance over NON-OVERLAPPING blocks (no window overlap -> no estimation-induced autocorrelation)",
+  "n_vol_points": 10000,
+  "sanity": {
+    "return_excess_kurtosis": 0.467323290811676,
+    "return_acf": {
+      "1": 0.00030575855730790934,
+      "5": 0.002244148457479827,
+      "20": -0.000144886128176303,
+      "100": 0.0002812468914061209
+    },
+    "squared_return_acf": {
+      "1": 0.017826302327833513,
+      "5": 0.017593646708610505,
+      "20": 0.013620589045274141,
+      "100": 0.01128115276964298,
+      "500": 0.0032211727222775837
+    },
+    "logvol_excess_kurtosis": 0.5937091264507242,
+    "logvol_acf": {
+      "1": 0.3498635487369657,
+      "2": 0.3022643600104335,
+      "5": 0.2080764754317695,
+      "10": 0.12004295397493078,
+      "50": 0.018404205811424195
+    }
+  },
+  "genuineness_base": {
+    "lags": [
+      2,
+      3,
+      4,
+      5,
+      7,
+      10,
+      14,
+      19,
+      26,
+      36,
+      50,
+      69,
+      95,
+      131,
+      181,
+      250
+    ],
+    "qs": [
+      0.5,
+      1.0,
+      1.5,
+      2.0,
+      2.5,
+      3.0,
+      4.0
+    ],
+    "curv_raw": 0.0014567793256173018,
+    "curv_shuf_mean": -5.9596332015445585e-06,
+    "curv_shuf_std": 0.00048114917418517025,
+    "n_shuffles": 60,
+    "frac_distributional": 0.0040909649778419245,
+    "frac_temporal": 0.9959090350221581,
+    "z_excess_over_null": 3.0153219983332806
+  },
+  "multiseed_curv_raw": {
+    "values": [
+      0.0011676981283649695,
+      0.0006402930508934296,
+      -0.00011104531383584889,
+      0.0006737009090981199,
+      0.0013532922192782968,
+      0.001249084709681017
+    ],
+    "mean": 0.0008288372839133306,
+    "std": 0.0005015780215385455
+  },
+  "scaling_limit_sweep": [
+    {
+      "mu_scale": 1,
+      "ret_excess_kurtosis": 0.499242431315718,
+      "logvol_acf1": 0.3750408542339601,
+      "curv_raw": 0.0009126442473364279,
+      "curv_shuf_std": 0.0005788792635254856,
+      "z": 1.5295665616392726
+    },
+    {
+      "mu_scale": 4,
+      "ret_excess_kurtosis": 0.13212362739665773,
+      "logvol_acf1": 0.17839570129288765,
+      "curv_raw": 0.002658692806431954,
+      "curv_shuf_std": 0.000985326842756359,
+      "z": 2.4720072659876724
+    },
+    {
+      "mu_scale": 16,
+      "ret_excess_kurtosis": 0.030623281130591096,
+      "logvol_acf1": 0.10019600002659244,
+      "curv_raw": 0.006060481636076896,
+      "curv_shuf_std": 0.0014348828638051456,
+      "z": 4.106739209455518
+    },
+    {
+      "mu_scale": 64,
+      "ret_excess_kurtosis": 0.0091994414043306,
+      "logvol_acf1": 0.07152489598820502,
+      "curv_raw": 0.004385193364956684,
+      "curv_shuf_std": 0.0012061999278054048,
+      "z": 3.308638692727877
+    }
+  ],
+  "distributional_control_studentt": {
+    "curv_raw": 0.0002048838618713249,
+    "curv_shuf_mean": -8.046505580738192e-05,
+    "curv_shuf_std": 0.0005551073807610911,
+    "n_shuffles": 60,
+    "frac_distributional": 0.3927349624926395,
+    "frac_temporal": 0.6072650375073605,
+    "z_excess_over_null": 0.22413466322357561,
+    "ret_excess_kurtosis": 73.49021881441874
+  },
+  "theory": {
+    "prediction": "Linear superposition of Hawkes SCALING LIMITS stays jointly Gaussian -> long-range dependence only, NO genuine (temporal) multifractal curvature."
+  },
+  "verdict": {
+    "genuine_multifractality": "NO (consistent with theory).",
+    "evidence": [
+      "Base-regime curv_raw is not robust: 6-seed mean 0.00083 +/- 0.00050 is comparable to the shuffle-null std (~0.0005) and one seed is negative -- i.e. at the noise floor, not a stable temporal cascade.",
+      "Scaling-limit sweep FALSIFIES a genuine-MF reading: as the process is driven toward the Gaussian monofractal limit (excess kurtosis 0.50->0.01, vol-clustering weakening), the measured zeta(q) curvature does NOT vanish but GROWS. Genuine multifractality would shrink toward the Gaussian limit; growing-while-Gaussianizing is the signature of an ESTIMATOR CROSSOVER artifact from short-range volatility autocorrelation over a finite lag window, not a genuine multifractal cascade.",
+      "Distributional control (iid Student-t df=3, excess kurtosis ~73) gives curv_raw ~ curv_shuf, z~0.2: the test correctly attributes a purely fat-tailed marginal to the distribution, not to temporal structure."
+    ],
+    "caveat": "The reference frac_temporal metric degenerates to ~100% whenever the marginal alone yields no curvature (curv_shuf~0); taken at face value it would spuriously flag ~100% 'genuine' temporal multifractality here. The robustness (multi-seed) and scaling-limit sweep are what reveal the curvature as artifactual. This is a distinct trap from the overlapping-window pitfall (which was separately avoided via non-overlapping blocks)."
+  }
+}
