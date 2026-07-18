@@ -206,7 +206,6 @@ def train(H, lam2, T, premium, kappa, gamma, iters, batch, lr=1e-3, verbose=Fals
     L, s2 = build_chol(H, lam2, T)
     net = GRUHedger(hidden=32)
     opt = torch.optim.Adam(net.parameters(), lr=lr)
-    sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=iters, eta_min=lr * 0.05)
     for it in range(iters):
         S, _ = simulate(batch, L, s2, seed=1000 + it)
         deltas = net(S)
@@ -215,7 +214,6 @@ def train(H, lam2, T, premium, kappa, gamma, iters, batch, lr=1e-3, verbose=Fals
         opt.zero_grad()
         loss.backward()
         opt.step()
-        sched.step()
         if verbose and (it % max(1, iters // 6) == 0 or it == iters - 1):
             print(f"    iter {it:4d}  risk={loss.item():+.6e}  std(W)={W.std().item():.6e}")
     return net, L, s2
@@ -242,8 +240,10 @@ def correctness_check():
     print(f"  Var(omega) in limit = {s2_chk:.3e}  (=> sigma ~ constant)")
 
     t0 = time.time()
+    # large batch -> low-variance gradient -> policy converges tightly to the
+    # deterministic BS optimum (the reliable lever; LR schedules destabilised it).
     net, L, s2 = train(H, lam2, T, premium, kappa, gamma,
-                       iters=3500, batch=4096, verbose=True)
+                       iters=2500, batch=8192, verbose=True)
     print(f"  training time: {time.time()-t0:.1f}s")
 
     # fresh test set

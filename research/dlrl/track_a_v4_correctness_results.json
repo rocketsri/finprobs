@@ -15,18 +15,18 @@
     "var_omega_limit": 2.5084851094973293e-06,
     "test_paths": 20000,
     "W_learned": {
-      "mean": -9.2339760158211e-06,
-      "std": 0.00625231908634305
+      "mean": -1.4729466784046963e-05,
+      "std": 0.00611965311691165
     },
     "W_bs_delta": {
       "mean": -4.629711474990472e-05,
       "std": 0.004264714661985636
     },
-    "std_ratio_learned_over_bs": 1.4660580090092106,
-    "delta_rmse": 0.07805360853672028,
-    "delta_mae": 0.0529794842004776,
-    "delta_corr": 0.9651188254356384,
-    "entropic_risk_learned": 0.0002038955717580393,
+    "std_ratio_learned_over_bs": 1.434950190562658,
+    "delta_rmse": 0.07497936487197876,
+    "delta_mae": 0.05121015012264252,
+    "delta_corr": 0.9705121517181396,
+    "entropic_risk_learned": 0.0002019882231252268,
     "entropic_risk_bs": 0.0001377105654682964,
     "pass_std_ratio": true,
     "pass_delta_shape": true,

@@ -258,9 +258,10 @@ def bs_benchmark_pnl(S, rv_unused, sigma0, K, T_total, n_steps, premium, kappa):
 # Training
 # ==========================================================================
 def train_hedger(S_tr, rv_tr, *, sigma0, K, T_total, n_steps, premium, kappa,
-                 gamma=10.0, epochs=60, batch=512, lr=1e-3, seed=0, log=print):
+                 gamma=10.0, epochs=60, batch=512, lr=1e-3, seed=0, hidden=32,
+                 log=print):
     torch.manual_seed(seed)
-    net = HedgeNet().to(DEVICE)
+    net = HedgeNet(hidden=hidden).to(DEVICE)
     opt = torch.optim.Adam(net.parameters(), lr=lr)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=epochs)
 
