@@ -1,0 +1,44 @@
+{
+  "correctness_bs_limit": {
+    "regime": {
+      "H": 0.499,
+      "lambda2": 1e-08,
+      "T": 0.5,
+      "kappa": 0.0,
+      "gamma": 10.0,
+      "N_steps": 21,
+      "dt": 0.003968253968253968,
+      "sigma_ref": 0.2,
+      "rho": -0.7
+    },
+    "bs_price": 0.023029744678024322,
+    "var_omega_limit": 2.5084851094973293e-06,
+    "test_paths": 20000,
+    "W_learned": {
+      "mean": -9.2339760158211e-06,
+      "std": 0.00625231908634305
+    },
+    "W_bs_delta": {
+      "mean": -4.629711474990472e-05,
+      "std": 0.004264714661985636
+    },
+    "std_ratio_learned_over_bs": 1.4660580090092106,
+    "delta_rmse": 0.07805360853672028,
+    "delta_mae": 0.0529794842004776,
+    "delta_corr": 0.9651188254356384,
+    "entropic_risk_learned": 0.0002038955717580393,
+    "entropic_risk_bs": 0.0001377105654682964,
+    "pass_std_ratio": true,
+    "pass_delta_shape": true,
+    "PASS": true
+  },
+  "cost_smoke_test": {
+    "H": 0.1,
+    "lambda2": 0.05,
+    "T": 0.5,
+    "kappa": 0.001,
+    "W_mean": -0.002270858269184828,
+    "W_std": 0.013755575753748417,
+    "trained_ok": true
+  }
+}
